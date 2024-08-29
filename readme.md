@@ -67,11 +67,11 @@ Registers a new user with the provided details.
   }
   ```
 
-  - username (string, required) - The desired username for the new user.
-  - password (string, required) - The password for the new user.
-  - email (string, required) - The email address of the new user.
-  - firstName (string, optional) - The first name of the user.
-  - lastName (string, optional) - The last name of the user.
+  - `username` (string, required) - The desired username for the new user.
+  - `password` (string, required) - The password for the new user.
+  - `email` (string, required) - The email address of the new user.
+  - `firstName` (string, optional) - The first name of the user.
+  - `lastName` (string, optional) - The last name of the user.
 
 - **Response: JSON**
 
