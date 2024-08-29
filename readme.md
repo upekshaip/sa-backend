@@ -6,7 +6,7 @@
 
 ## API Endpoints
 
-- Base URL: Will added later
+- Base URL: `http://localhost:<PORT>/`
 - All requests needs to be submitted in JSON format
   - Headers: `Content-Type: application/json`
 

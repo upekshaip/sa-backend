@@ -465,11 +465,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Campus Projects\\SA Backend\\api\\api.csproj",
+      "projectUniqueName": "D:\\Campus Projects\\SA Backend\\api2\\api\\api.csproj",
       "projectName": "api",
-      "projectPath": "D:\\Campus Projects\\SA Backend\\api\\api.csproj",
+      "projectPath": "D:\\Campus Projects\\SA Backend\\api2\\api\\api.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "D:\\Campus Projects\\SA Backend\\api\\obj\\",
+      "outputPath": "D:\\Campus Projects\\SA Backend\\api2\\api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
