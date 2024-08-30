@@ -8,7 +8,7 @@ namespace api.Models;
 
 public class AuctionItem
 {
-    public int ItemId { get; set; }
+    public int AuctionItemId { get; set; }
     public int AuctionId { get; set; }
 
     [StringLength(255)]
