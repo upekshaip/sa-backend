@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Data;
 
-public class AuctionContext : DbContext
+public class APIContext : DbContext
 {
-    public AuctionContext(DbContextOptions<AuctionContext> options)
+    public APIContext(DbContextOptions<APIContext> options)
                 : base(options)
             {
             }

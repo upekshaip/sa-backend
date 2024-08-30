@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AuctionContext>(options => {
+builder.Services.AddDbContext<APIContext>(options => {
 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
 ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")
 ));});

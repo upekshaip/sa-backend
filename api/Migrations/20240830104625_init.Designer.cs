@@ -10,9 +10,9 @@ using api.Data;
 
 namespace api.Migrations
 {
-    [DbContext(typeof(AuctionContext))]
-    [Migration("20240830101741_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(APIContext))]
+    [Migration("20240830104625_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

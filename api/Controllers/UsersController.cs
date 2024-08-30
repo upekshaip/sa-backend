@@ -12,8 +12,8 @@ namespace api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AuctionContext _context;
-        public UsersController(AuctionContext context)
+        private readonly APIContext _context;
+        public UsersController(APIContext context)
         {
         _context = context;
         }
