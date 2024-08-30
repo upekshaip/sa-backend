@@ -18,9 +18,20 @@ namespace api.Controllers
         _context = context;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public IActionResult GetAll()
         {
-            return await _context.Users.ToListAsync();
+            var users =  _context.Users.ToList();
+            return Ok(users);
+        }
+        [HttpGet("{id}")]
+        public IActionResult GetById([FromRoute] int id)
+        {
+            var user = _context.Users.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
     }
 }
