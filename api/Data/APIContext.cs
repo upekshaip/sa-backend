@@ -6,10 +6,11 @@ namespace api.Data;
 
 public class APIContext : DbContext
 {
-    public APIContext(DbContextOptions<APIContext> options)
-                : base(options)
-            {
-            }
+    public APIContext(DbContextOptions<APIContext> options) : base(options) {}
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Auction> Auctions { get; set; }
+    public DbSet<Bid> Bids { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 }

@@ -29,6 +29,6 @@ public class User
     [StringLength(255)] 
     public string Token { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }
