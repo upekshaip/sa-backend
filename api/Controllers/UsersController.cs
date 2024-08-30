@@ -17,21 +17,35 @@ namespace api.Controllers
         {
         _context = context;
         }
+
+
         [HttpGet]
         public IActionResult GetAll()
         {
             var users =  _context.Users.ToList();
             return Ok(users);
         }
+
+        
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id)
         {
             var user = _context.Users.Find(id);
             if (user == null)
             {
-                return NotFound();
+                var errorResponse = new {
+                    success = false,
+                    message = "User not found"
+                };
+                return NotFound(errorResponse);
             }
-            return Ok(user);
+            var successResponse = new {
+                success = true,
+                message = "User found",
+                data = user
+            };
+            return Ok(successResponse);
         }
     }
 }
+            
