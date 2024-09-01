@@ -11,7 +11,7 @@ public static class UserMappers
     {
         return new UserDto
         {
-            Id = userModel.Id,
+            Id = userModel.UserId,
             FirstName = userModel.FirstName,
             LastName = userModel.LastName,
             Email = userModel.Email,

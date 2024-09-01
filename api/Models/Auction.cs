@@ -14,8 +14,9 @@ public class Auction
     public string Description { get; set; } = string.Empty;
     public string AuctionImage { get; set; } = string.Empty;
     public string AuctionCategory { get; set; } = string.Empty;
-    public required User SellerId { get; set; }
-    public User? WinnerId { get; set; }
+    // public int SellerId { get; set; }
+    public int SellerId { get; set; }
+    public int? WinnerId { get; set; }
     
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

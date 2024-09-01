@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240901124933_UpdatedNew")]
-    partial class UpdatedNew
+    [Migration("20240901145454_UpdateTwo")]
+    partial class UpdateTwo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,7 +57,7 @@ namespace api.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal?>("StartingBid")
+                    b.Property<decimal>("StartingBid")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
@@ -72,6 +72,9 @@ namespace api.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
@@ -79,6 +82,8 @@ namespace api.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("AuctionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Auctions");
                 });
@@ -248,11 +253,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -301,9 +306,16 @@ namespace api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("api.Models.Auction", b =>
+                {
+                    b.HasOne("api.Models.User", null)
+                        .WithMany("Auctions")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("api.Models.AuctionItem", b =>
@@ -326,7 +338,7 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.HasOne("api.Models.User", "Bidder")
-                        .WithMany()
+                        .WithMany("Bids")
                         .HasForeignKey("BidderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -339,6 +351,13 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.Auction", b =>
                 {
                     b.Navigation("AuctionItems");
+
+                    b.Navigation("Bids");
+                });
+
+            modelBuilder.Entity("api.Models.User", b =>
+                {
+                    b.Navigation("Auctions");
 
                     b.Navigation("Bids");
                 });
