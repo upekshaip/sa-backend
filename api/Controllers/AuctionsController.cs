@@ -1,52 +1,47 @@
 using api.Data;
-using api.Models;
+using api.Mappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using api.Mappers;
 
 namespace api.Controllers
 {
-    [Route("api/users")]
+    [Route("api/auctions")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class AuctionsController : ControllerBase
     {
         private readonly APIContext _context;
-        public UsersController(APIContext context)
+        public AuctionsController(APIContext context)
         {
         _context = context;
         }
 
-
         [HttpGet]
         public IActionResult GetAll()
         {
-            var users =  _context.Users.ToList().Select(s => s.ToUserDtoGet());
-            return Ok(users);
+            var auctions =  _context.Auctions.ToList().Select(s => s.ToAuctionsDtoGet());
+            return Ok(auctions);
         }
 
         
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var user = _context.Users.Find(id);
-            if (user == null)
+            var auction = _context.Auctions.Find(id);
+            if (auction == null)
             {
                 var errorResponse = new {
                     success = false,
-                    message = "UserNotFound"
+                    message = "AuctionNotFound"
                 };
                 return NotFound(errorResponse);
             }
             var successResponse = new {
                 success = true,
                 message = "ok",
-                data = user
+                data = auction
             };
             return Ok(successResponse);
         }
+        
     }
 }
-            

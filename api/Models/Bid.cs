@@ -8,9 +8,12 @@ namespace api.Models;
 public class Bid
 {
     public int BidId { get; set; }
-    public int ItemId { get; set; }
+    public int AuctionId { get; set; }
+    public required Auction Auction { get; set; }
     public int BidderId { get; set; }
+    public required User Bidder { get; set; }
     
+
     [StringLength(50)]
     public string Status { get; set; } = string.Empty;
     

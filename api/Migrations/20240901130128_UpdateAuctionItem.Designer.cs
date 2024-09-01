@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    partial class APIContextModelSnapshot : ModelSnapshot
+    [Migration("20240901130128_UpdateAuctionItem")]
+    partial class UpdateAuctionItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace api.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("StartingBid")
+                    b.Property<decimal?>("StartingBid")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
@@ -69,9 +72,6 @@ namespace api.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
@@ -79,8 +79,6 @@ namespace api.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("AuctionId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Auctions");
                 });
@@ -93,7 +91,7 @@ namespace api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("AuctionItemId"));
 
-                    b.Property<int>("AuctionId")
+                    b.Property<int?>("AuctionId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -308,20 +306,11 @@ namespace api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("api.Models.Auction", b =>
-                {
-                    b.HasOne("api.Models.User", null)
-                        .WithMany("Auctions")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("api.Models.AuctionItem", b =>
                 {
                     b.HasOne("api.Models.Auction", "Auction")
                         .WithMany("AuctionItems")
-                        .HasForeignKey("AuctionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuctionId");
 
                     b.Navigation("Auction");
                 });
@@ -335,7 +324,7 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.HasOne("api.Models.User", "Bidder")
-                        .WithMany("Bids")
+                        .WithMany()
                         .HasForeignKey("BidderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -348,13 +337,6 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.Auction", b =>
                 {
                     b.Navigation("AuctionItems");
-
-                    b.Navigation("Bids");
-                });
-
-            modelBuilder.Entity("api.Models.User", b =>
-                {
-                    b.Navigation("Auctions");
 
                     b.Navigation("Bids");
                 });

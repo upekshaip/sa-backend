@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240830132606_ModifyAllDB")]
-    partial class ModifyAllDB
+    [Migration("20240901140109_UpdateSome")]
+    partial class UpdateSome
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("AuctionImage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -57,7 +61,6 @@ namespace api.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -66,10 +69,13 @@ namespace api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("WinnerId")
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("WinningBid")
@@ -77,7 +83,50 @@ namespace api.Migrations
 
                     b.HasKey("AuctionId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Auctions");
+                });
+
+            modelBuilder.Entity("api.Models.AuctionItem", b =>
+                {
+                    b.Property<int>("AuctionItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("AuctionItemId"));
+
+                    b.Property<int>("AuctionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ItemCategory")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ItemDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ItemImage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("AuctionItemId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.ToTable("AuctionItems");
                 });
 
             modelBuilder.Entity("api.Models.Bid", b =>
@@ -88,6 +137,9 @@ namespace api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BidId"));
 
+                    b.Property<int>("AuctionId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("BidAmount")
                         .HasColumnType("decimal(18, 2)");
 
@@ -96,9 +148,6 @@ namespace api.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -109,6 +158,10 @@ namespace api.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("BidId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("BidderId");
 
                     b.ToTable("Bids");
                 });
@@ -256,6 +309,57 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("api.Models.Auction", b =>
+                {
+                    b.HasOne("api.Models.User", null)
+                        .WithMany("Auctions")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("api.Models.AuctionItem", b =>
+                {
+                    b.HasOne("api.Models.Auction", "Auction")
+                        .WithMany("AuctionItems")
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
+                });
+
+            modelBuilder.Entity("api.Models.Bid", b =>
+                {
+                    b.HasOne("api.Models.Auction", "Auction")
+                        .WithMany("Bids")
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.User", "Bidder")
+                        .WithMany("Bids")
+                        .HasForeignKey("BidderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
+
+                    b.Navigation("Bidder");
+                });
+
+            modelBuilder.Entity("api.Models.Auction", b =>
+                {
+                    b.Navigation("AuctionItems");
+
+                    b.Navigation("Bids");
+                });
+
+            modelBuilder.Entity("api.Models.User", b =>
+                {
+                    b.Navigation("Auctions");
+
+                    b.Navigation("Bids");
                 });
 #pragma warning restore 612, 618
         }

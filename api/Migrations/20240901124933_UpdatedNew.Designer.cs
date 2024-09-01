@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240830133538_AddedItems")]
-    partial class AddedItems
+    [Migration("20240901124933_UpdatedNew")]
+    partial class UpdatedNew
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("AuctionImage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -53,11 +57,10 @@ namespace api.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("StartingBid")
+                    b.Property<decimal?>("StartingBid")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -66,10 +69,10 @@ namespace api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("WinnerId")
+                    b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("WinningBid")
@@ -95,7 +98,6 @@ namespace api.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ItemCategory")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -112,10 +114,12 @@ namespace api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("AuctionItemId");
+
+                    b.HasIndex("AuctionId");
 
                     b.ToTable("AuctionItems");
                 });
@@ -128,6 +132,9 @@ namespace api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BidId"));
 
+                    b.Property<int>("AuctionId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("BidAmount")
                         .HasColumnType("decimal(18, 2)");
 
@@ -136,9 +143,6 @@ namespace api.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -149,6 +153,10 @@ namespace api.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("BidId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("BidderId");
 
                     b.ToTable("Bids");
                 });
@@ -296,6 +304,43 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("api.Models.AuctionItem", b =>
+                {
+                    b.HasOne("api.Models.Auction", "Auction")
+                        .WithMany("AuctionItems")
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
+                });
+
+            modelBuilder.Entity("api.Models.Bid", b =>
+                {
+                    b.HasOne("api.Models.Auction", "Auction")
+                        .WithMany("Bids")
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.User", "Bidder")
+                        .WithMany()
+                        .HasForeignKey("BidderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
+
+                    b.Navigation("Bidder");
+                });
+
+            modelBuilder.Entity("api.Models.Auction", b =>
+                {
+                    b.Navigation("AuctionItems");
+
+                    b.Navigation("Bids");
                 });
 #pragma warning restore 612, 618
         }
