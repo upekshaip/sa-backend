@@ -10,7 +10,7 @@ public class AuctionItem
 {
     public int AuctionItemId { get; set; }
     public int AuctionId { get; set; }
-    public required Auction Auction { get; set; }
+    public Auction? Auction { get; set; }
 
     [StringLength(255)]
     public string ItemName { get; set; } = string.Empty;

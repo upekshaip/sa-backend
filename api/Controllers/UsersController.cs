@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using api.Mappers;
+using api.Dtos.Users;
+using System.Reflection.Metadata.Ecma335;
 
 namespace api.Controllers
 {
@@ -46,6 +48,24 @@ namespace api.Controllers
                 data = user
             };
             return Ok(successResponse);
+        }
+
+        [Route("create")]
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateUserDto userDto) 
+        {
+            var userModel = userDto.ToUserFromCreateDto();
+
+            _context.Users.Add(userModel);
+            _context.SaveChanges();
+
+            return Ok(new
+            { 
+            success = true, 
+            message = "ok", 
+            data = userModel.ToUserDtoGet()
+            });
+            // return CreatedAtAction(nameof(GetById), new {id = userModel.UserId}, userModel);
         }
     }
 }

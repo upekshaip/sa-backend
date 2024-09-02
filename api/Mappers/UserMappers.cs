@@ -24,6 +24,18 @@ public static class UserMappers
             Token = userModel.Token
 
         };
+    }
 
+    public static User ToUserFromCreateDto(this CreateUserDto userDto) {
+        return new User {
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
+            Username = userDto.Username,
+            Email = userDto.Email,
+            Gender = userDto.Gender,
+            Password = userDto.Password,
+            Mobile = userDto.Mobile,
+            Address = userDto.Address,
+        };
     }
 }
