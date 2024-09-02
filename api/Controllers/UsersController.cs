@@ -21,7 +21,7 @@ namespace api.Controllers
         _context = context;
         }
 
-
+        // Get All users API
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -29,7 +29,7 @@ namespace api.Controllers
             return Ok(users);
         }
 
-        
+        // User get bu id API
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id)
         {
@@ -50,7 +50,8 @@ namespace api.Controllers
             return Ok(successResponse);
         }
 
-        [Route("create")]
+        // User Create API
+        [Route("signup")]
         [HttpPost]
         public IActionResult Create([FromBody] CreateUserDto userDto) 
         {
@@ -65,8 +66,94 @@ namespace api.Controllers
             message = "ok", 
             data = userModel.ToUserDtoGet()
             });
-            // return CreatedAtAction(nameof(GetById), new {id = userModel.UserId}, userModel);
         }
+
+        // Update Users API (CreateUserDto same as above)
+        [HttpPut]
+        [Route("edit")]
+        public IActionResult Update([FromBody] UpdateUserDto updateUserDto)
+        {
+            var userModel = _context.Users.FirstOrDefault(x => x.UserId == updateUserDto.Id);
+            if (userModel == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "UserNotFound"
+                };
+                return NotFound(errorResponse);
+            }
+            userModel.FirstName = updateUserDto.FirstName;
+            userModel.LastName = updateUserDto.LastName;
+            userModel.Username = updateUserDto.Username;
+            userModel.Address = updateUserDto.Address;
+            userModel.Gender = updateUserDto.Gender;
+            userModel.Email = updateUserDto.Email;
+            userModel.Mobile = updateUserDto.Mobile;
+            userModel.UpdatedAt = DateTime.Now;
+
+            
+            _context.SaveChanges();
+
+            return Ok(new {
+                success = true, 
+                message = "ok", 
+                data = userModel.ToUserDtoGet()
+            });
+        }
+        
+        [HttpPost]
+        [Route("resetPassword")]
+        public IActionResult UpdatePassword([FromBody] ResetUserPasswordDto resetUserDto)
+        {
+            var userModel = _context.Users.FirstOrDefault(x => x.UserId == resetUserDto.Id);
+            if (userModel == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "UserNotFound"
+                };
+                return NotFound(errorResponse);
+            }
+            if (userModel.Password == resetUserDto.OldPassword)
+            {
+                userModel.Password = resetUserDto.NewPassword;
+                userModel.UpdatedAt = DateTime.Now;
+                _context.SaveChanges();
+                return Ok(new {
+                    success = true, 
+                    message = "ok", 
+                    data = userModel.ToUserDtoGet()
+                });
+            } else {
+                var errorResponse = new {
+                    success = false,
+                    message = "OldPasswordNotMatch"
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public IActionResult LoginUser([FromBody] UserLoginDto userLoginDto)
+        {
+            var userModel = _context.Users.FirstOrDefault(x => (x.Username == userLoginDto.Username || x.Email == userLoginDto.Username) && x.Password == userLoginDto.Password);
+            if (userModel == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "InvalidUsernameOrPassword"
+                };
+                return NotFound(errorResponse);
+            } else {
+                var successResponse = new {
+                    success = true,
+                    message = "LoginSuccess",
+                    data = userModel.ToUserDtoGet()
+                };
+                return BadRequest(successResponse);
+            }
+        }
+        
     }
 }
-            

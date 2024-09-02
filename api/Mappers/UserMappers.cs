@@ -36,6 +36,7 @@ public static class UserMappers
             Password = userDto.Password,
             Mobile = userDto.Mobile,
             Address = userDto.Address,
+            Token = userDto.Username
         };
     }
 }
