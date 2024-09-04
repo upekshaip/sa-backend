@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateOne : Migration
+    public partial class UpdatedDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -118,14 +118,15 @@ namespace api.Migrations
                     Status = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Auctions", x => x.AuctionId);
                     table.ForeignKey(
-                        name: "FK_Auctions_Users_SellerId",
-                        column: x => x.SellerId,
+                        name: "FK_Auctions_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
                 })
@@ -199,9 +200,9 @@ namespace api.Migrations
                 column: "AuctionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Auctions_SellerId",
+                name: "IX_Auctions_UserId",
                 table: "Auctions",
-                column: "SellerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bids_AuctionId",

@@ -317,13 +317,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.AuctionItem", b =>
                 {
-                    b.HasOne("api.Models.Auction", "Auction")
+                    b.HasOne("api.Models.Auction", null)
                         .WithMany("AuctionItems")
                         .HasForeignKey("AuctionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Auction");
                 });
 
             modelBuilder.Entity("api.Models.Bid", b =>

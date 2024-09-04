@@ -1,4 +1,5 @@
 using api.Data;
+using api.Dtos.AuctionItems;
 using api.Dtos.Auctions;
 using api.Mappers;
 using api.Models;
@@ -46,11 +47,15 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
-            // auction.Seller = user;
+            var auctionItems = _context.AuctionItems.Where(x => x.AuctionId == auction.AuctionId).ToList();
+            auction.AuctionItems = auctionItems;
             var successResponse = new {
                 success = true,
                 message = "ok",
-                data = auction
+                data = new {
+                    auction = auction,
+                    user = user.ToUserDtoGet()
+                },
             };
             return Ok(successResponse);
         }
@@ -90,6 +95,35 @@ namespace api.Controllers
             data = auctionModel.ToAuctionsDtoGet()
             });
         }
-        
+
+        [Route("additem")]
+        [HttpPost]
+        public IActionResult AddAuctionItem([FromBody] CreateAuctionItemDto createAuctionItemDto)
+        {
+            var auction = _context.Auctions.FirstOrDefault(x => x.AuctionId == createAuctionItemDto.AuctionId);
+            if (auction == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "AuctionNotFound"
+                };
+                return NotFound(errorResponse);
+            }
+            var auctionItem = new AuctionItem {
+                AuctionId = auction.AuctionId,
+                ItemName = createAuctionItemDto.ItemName,
+                ItemDescription = createAuctionItemDto.ItemDescription,
+                ItemImage = createAuctionItemDto.ItemImage,
+                ItemCategory = createAuctionItemDto.ItemCategory,
+            };
+            _context.AuctionItems.Add(auctionItem);
+            _context.SaveChanges();
+            return Ok(new
+            {
+                success = true,
+                message = "ok",
+                data = auctionItem
+            });
+        }
     }
 }

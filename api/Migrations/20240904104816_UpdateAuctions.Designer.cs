@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240904074127_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20240904104816_UpdateAuctions")]
+    partial class UpdateAuctions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -320,13 +320,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.AuctionItem", b =>
                 {
-                    b.HasOne("api.Models.Auction", "Auction")
+                    b.HasOne("api.Models.Auction", null)
                         .WithMany("AuctionItems")
                         .HasForeignKey("AuctionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Auction");
                 });
 
             modelBuilder.Entity("api.Models.Bid", b =>
