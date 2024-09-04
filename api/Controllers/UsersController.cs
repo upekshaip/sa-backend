@@ -1,13 +1,8 @@
 using api.Data;
-using api.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using api.Mappers;
 using api.Dtos.Users;
-using System.Reflection.Metadata.Ecma335;
+
 
 namespace api.Controllers
 {
@@ -42,6 +37,8 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
+            var auctions = _context.Auctions.Where(x => x.SellerId == id).ToList();
+            user.Auctions = auctions;
             var successResponse = new {
                 success = true,
                 message = "ok",

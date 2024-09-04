@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240901144413_UpdateOne")]
-    partial class UpdateOne
+    [Migration("20240904074127_UpdateModels")]
+    partial class UpdateModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace api.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("SellerIdUserId")
+                    b.Property<int?>("SellerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
@@ -72,6 +72,9 @@ namespace api.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
@@ -80,7 +83,7 @@ namespace api.Migrations
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("SellerIdUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Auctions");
                 });
@@ -310,13 +313,9 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.Auction", b =>
                 {
-                    b.HasOne("api.Models.User", "SellerId")
+                    b.HasOne("api.Models.User", null)
                         .WithMany("Auctions")
-                        .HasForeignKey("SellerIdUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SellerId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("api.Models.AuctionItem", b =>

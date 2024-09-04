@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20240901152025_AddOne")]
-    partial class AddOne
+    [Migration("20240903201142_UpdateOne")]
+    partial class UpdateOne
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace api.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int?>("SellerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
@@ -72,9 +72,6 @@ namespace api.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("WinnerId")
                         .HasColumnType("int");
 
@@ -83,7 +80,7 @@ namespace api.Migrations
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Auctions");
                 });
@@ -313,9 +310,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.Auction", b =>
                 {
-                    b.HasOne("api.Models.User", null)
+                    b.HasOne("api.Models.User", "Seller")
                         .WithMany("Auctions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("SellerId");
+
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("api.Models.AuctionItem", b =>

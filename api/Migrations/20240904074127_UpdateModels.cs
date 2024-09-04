@@ -5,23 +5,18 @@
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTwo : Migration
+    public partial class UpdateModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Auctions_Users_SellerIdUserId",
+                name: "FK_Auctions_Users_SellerId",
                 table: "Auctions");
 
             migrationBuilder.DropIndex(
-                name: "IX_Auctions_SellerIdUserId",
+                name: "IX_Auctions_SellerId",
                 table: "Auctions");
-
-            migrationBuilder.RenameColumn(
-                name: "SellerIdUserId",
-                table: "Auctions",
-                newName: "SellerId");
 
             migrationBuilder.AddColumn<int>(
                 name: "UserId",
@@ -57,23 +52,17 @@ namespace api.Migrations
                 name: "UserId",
                 table: "Auctions");
 
-            migrationBuilder.RenameColumn(
-                name: "SellerId",
-                table: "Auctions",
-                newName: "SellerIdUserId");
-
             migrationBuilder.CreateIndex(
-                name: "IX_Auctions_SellerIdUserId",
+                name: "IX_Auctions_SellerId",
                 table: "Auctions",
-                column: "SellerIdUserId");
+                column: "SellerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Auctions_Users_SellerIdUserId",
+                name: "FK_Auctions_Users_SellerId",
                 table: "Auctions",
-                column: "SellerIdUserId",
+                column: "SellerId",
                 principalTable: "Users",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "UserId");
         }
     }
 }

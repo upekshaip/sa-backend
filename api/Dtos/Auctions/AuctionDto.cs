@@ -2,7 +2,6 @@ using System;
 using api.Models;
 
 namespace api.Dtos.Auctions;
-
 public class AuctionDto
 {
     public int AuctionId { get; set; }
@@ -10,7 +9,7 @@ public class AuctionDto
     public string Description { get; set; } = string.Empty;
     public string AuctionImage { get; set; } = string.Empty;
     public string AuctionCategory { get; set; } = string.Empty;
-    public int SellerId { get; set; }
+    public int? SellerId { get; set; }
     // public User? WinnerId { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

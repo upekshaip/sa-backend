@@ -109,7 +109,7 @@ namespace api.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AuctionCategory = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SellerIdUserId = table.Column<int>(type: "int", nullable: false),
+                    SellerId = table.Column<int>(type: "int", nullable: true),
                     WinnerId = table.Column<int>(type: "int", nullable: true),
                     StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -124,11 +124,10 @@ namespace api.Migrations
                 {
                     table.PrimaryKey("PK_Auctions", x => x.AuctionId);
                     table.ForeignKey(
-                        name: "FK_Auctions_Users_SellerIdUserId",
-                        column: x => x.SellerIdUserId,
+                        name: "FK_Auctions_Users_SellerId",
+                        column: x => x.SellerId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -200,9 +199,9 @@ namespace api.Migrations
                 column: "AuctionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Auctions_SellerIdUserId",
+                name: "IX_Auctions_SellerId",
                 table: "Auctions",
-                column: "SellerIdUserId");
+                column: "SellerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bids_AuctionId",

@@ -1,5 +1,6 @@
 using System;
 using api.Dtos.Auctions;
+using api.Dtos.Users;
 using api.Models;
 
 namespace api.Mappers;
