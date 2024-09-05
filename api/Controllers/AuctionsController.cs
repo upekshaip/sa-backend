@@ -38,8 +38,8 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
-            var user = _context.Users.FirstOrDefault(x => x.UserId == auction.SellerId);
-            if (user == null)
+            var seller = _context.Users.FirstOrDefault(x => x.UserId == auction.SellerId);
+            if (seller == null)
             {
                 var errorResponse = new {
                     success = false,
@@ -54,7 +54,7 @@ namespace api.Controllers
                 message = "ok",
                 data = new {
                     auction = auction,
-                    user = user.ToUserDtoGet()
+                    seller = seller.ToUserDtoGet()
                 },
             };
             return Ok(successResponse);
