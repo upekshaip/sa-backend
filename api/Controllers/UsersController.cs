@@ -37,12 +37,16 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
-            var auctions = _context.Auctions.Where(x => x.SellerId == id).ToList();
-            user.Auctions = auctions;
+            var auctions = _context.Auctions.Where(x => x.SellerId == id).Select(a => a.ToAuctionsDtoGet()).ToList();
+            var bids = _context.Bids.Where(x => x.BidderId == id).Select(a => a.ToBidDtoGet()).ToList();
             var successResponse = new {
                 success = true,
                 message = "ok",
-                data = user
+                data = new {
+                user = user.ToUserDtoGet(),
+                auctions = auctions,
+                bids = bids
+                }
             };
             return Ok(successResponse);
         }
