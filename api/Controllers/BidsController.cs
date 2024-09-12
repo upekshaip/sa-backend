@@ -47,6 +47,14 @@ namespace api.Controllers
                 return NotFound(errorResponse);
             }
             var auction = _context.Auctions.FirstOrDefault(x => x.AuctionId == bid.AuctionId);
+            if (auction == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "AuctionNotFound"
+                };
+                return NotFound(errorResponse);
+            }
             var successResponse = new {
                 success = true,
                 message = "ok",
