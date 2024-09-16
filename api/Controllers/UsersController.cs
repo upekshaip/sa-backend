@@ -4,6 +4,7 @@ using api.Mappers;
 using api.Dtos.Users;
 
 
+
 namespace api.Controllers
 {
     [Route("api/users")]
@@ -58,8 +59,28 @@ namespace api.Controllers
         {
             var userModel = userDto.ToUserFromCreateDto();
 
+            var isEmail = _context.Users.FirstOrDefault(x => x.Email == userModel.Email);
+            if (isEmail != null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "Email already exists"
+                };
+                return BadRequest(errorResponse);
+            }
+            var isUsername = _context.Users.FirstOrDefault(x => x.Username == userModel.Username);
+            if (isUsername != null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "Username already exists"
+                };
+                return BadRequest(errorResponse);
+            }
+
             _context.Users.Add(userModel);
             _context.SaveChanges();
+
 
             return Ok(new
             { 
@@ -111,7 +132,7 @@ namespace api.Controllers
             {
                 var errorResponse = new {
                     success = false,
-                    message = "UserNotFound"
+                    message = "User not found"
                 };
                 return NotFound(errorResponse);
             }
@@ -128,7 +149,7 @@ namespace api.Controllers
             } else {
                 var errorResponse = new {
                     success = false,
-                    message = "OldPasswordNotMatch"
+                    message = "Old password not matched"
                 };
                 return BadRequest(errorResponse);
             }
@@ -143,16 +164,16 @@ namespace api.Controllers
             {
                 var errorResponse = new {
                     success = false,
-                    message = "InvalidUsernameOrPassword"
+                    message = "Invalid username or password"
                 };
                 return NotFound(errorResponse);
             } else {
                 var successResponse = new {
                     success = true,
-                    message = "LoginSuccess",
+                    message = "Login Success",
                     data = userModel.ToUserDtoGet()
                 };
-                return BadRequest(successResponse);
+                return Ok(successResponse);
             }
         }
         
