@@ -25,6 +25,14 @@ namespace api.Controllers
             return Ok(auctions);
         }
 
+        [Route("my")]
+        [HttpPost]
+        public IActionResult GetMyAuctions([FromBody] GetMyAuctionsDto request)
+        {
+            var auctions =  _context.Auctions.Where(x => x.SellerId == request.Id).ToList().Select(s => s.ToAuctionsDtoGet());
+            return Ok(auctions);
+        }
+
         
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id)
