@@ -82,6 +82,7 @@ namespace api.Controllers
                 SellerId = user.UserId,
                 StartTime = createAuction.StartTime,
                 EndTime = createAuction.EndTime,
+                StartingBid = createAuction.StartingBid,
                 Status = "pending",
             };
             

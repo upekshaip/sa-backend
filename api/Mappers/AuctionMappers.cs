@@ -15,6 +15,7 @@ public static class AuctionMappers
             Title = auctionsModel.Title,
             Description = auctionsModel.Description,
             AuctionImage = auctionsModel.AuctionImage,
+            StartingBid = auctionsModel.StartingBid,
             AuctionCategory = auctionsModel.AuctionCategory,
             SellerId = auctionsModel.SellerId,
             StartTime = auctionsModel.StartTime,

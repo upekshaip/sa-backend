@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedDB : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -174,7 +174,8 @@ namespace api.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     BidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -186,11 +187,10 @@ namespace api.Migrations
                         principalColumn: "AuctionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Bids_Users_BidderId",
-                        column: x => x.BidderId,
+                        name: "FK_Bids_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -210,9 +210,9 @@ namespace api.Migrations
                 column: "AuctionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bids_BidderId",
+                name: "IX_Bids_UserId",
                 table: "Bids",
-                column: "BidderId");
+                column: "UserId");
         }
 
         /// <inheritdoc />
