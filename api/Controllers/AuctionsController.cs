@@ -13,10 +13,14 @@ namespace api.Controllers
     public class AuctionsController : ControllerBase
     {
         private readonly APIContext _context;
-        public AuctionsController(APIContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public AuctionsController(APIContext context, IWebHostEnvironment webHostEnvironment)
         {
         _context = context;
+        _webHostEnvironment = webHostEnvironment;
         }
+        
 
         [HttpGet]
         public IActionResult GetAll()
@@ -134,5 +138,40 @@ namespace api.Controllers
                 data = auctionItem
             });
         }
+
+        [HttpPost("upload-image")]
+        public IActionResult UploadAuctionImage(IFormFile file)
+        {
+            // Check extension
+            List<string> validExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            string ext = Path.GetExtension(file.FileName);
+            if (!validExtensions.Contains(ext)) {
+                return BadRequest(new {
+                    success = false,
+                    message = "Invalid file type"
+                });
+            }
+            // Check file size
+            long size = file.Length;
+            if (size > 5 * 1024 * 1024) {
+                return BadRequest(new {
+                    success = false,
+                    message = "File size too large"
+                });
+            }
+            string fileName = Guid.NewGuid().ToString() + ext;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            using FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create);
+            file.CopyTo(stream);
+
+            return Ok(new {
+                success = true,
+                message = "ok",
+                data = new {
+                    fileName = fileName
+                }
+            });
+        }
+
     }
 }
