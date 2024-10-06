@@ -60,6 +60,8 @@ namespace api.Controllers
                 return NotFound(errorResponse);
             }
             var auctionItems = _context.AuctionItems.Where(x => x.AuctionId == auction.AuctionId).ToList();
+            var bids = _context.Bids.Where(x => x.AuctionId == auction.AuctionId).ToList();
+            auction.Bids = bids;
             auction.AuctionItems = auctionItems;
             var successResponse = new {
                 success = true,
