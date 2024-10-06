@@ -11,6 +11,9 @@ public class Bid
     public int AuctionId { get; set; }
     public int BidderId { get; set; }
     
+    [StringLength(255)]
+    public string BidderName { get; set; } = string.Empty;
+    
     [StringLength(50)]
     public string Status { get; set; } = string.Empty;
     

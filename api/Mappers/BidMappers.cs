@@ -13,6 +13,7 @@ public static class BidMappers
             BidId = bidsModel.BidId,
             AuctionId = bidsModel.AuctionId,
             BidderId = bidsModel.BidderId,
+            BidderName = bidsModel.BidderName,
             BidAmount = bidsModel.BidAmount,
             CreatedAt = bidsModel.CreatedAt,
             UpdatedAt = bidsModel.UpdatedAt

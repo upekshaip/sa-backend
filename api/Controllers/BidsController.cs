@@ -95,7 +95,8 @@ namespace api.Controllers
                 AuctionId = createBid.AuctionId,
                 BidderId = createBid.BidderId,
                 Status = createBid.Status,
-                BidAmount = createBid.BidAmount
+                BidAmount = createBid.BidAmount,
+                BidderName = bidder.FirstName + " " + bidder.LastName
             };
             
             _context.Bids.Add(bidModel);
