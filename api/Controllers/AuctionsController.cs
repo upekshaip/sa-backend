@@ -36,6 +36,44 @@ namespace api.Controllers
             var auctions =  _context.Auctions.Where(x => x.SellerId == request.Id).ToList().Select(s => s.ToAuctionsDtoGet());
             return Ok(auctions);
         }
+        
+        [Route("mybids")]
+        [HttpPost]
+        public IActionResult GetMyBids([FromBody] GetMyAuctionsDto request)
+        {
+            // Get all auctions where the user has placed bids
+            var auctionsWithUserBids = _context.Auctions
+                .Where(a => a.Bids.Any(b => b.BidderId == request.Id))
+                .Select(a => new 
+                {
+                    Auction = a.ToAuctionsDtoGet(),
+                    UserBids = a.Bids
+                        .Where(b => b.BidderId == request.Id)
+                        .Select(b => b.ToBidDtoGet())
+                        .ToList()
+                })
+                .ToList();
+
+            return Ok(auctionsWithUserBids);
+        }
+        
+        [Route("statusUpdate")]
+        [HttpPost]
+        public IActionResult StatusUpdate([FromBody] StatusUpdateDto request)
+        {
+            var auction = _context.Auctions
+                .FirstOrDefault(x => x.AuctionId == request.AuctionId && x.SellerId == request.Id);
+
+            if (auction == null)
+            {
+                return NotFound("Auction not found.");
+            }
+            auction.Status = request.Status;
+            _context.SaveChanges();
+            return Ok(auction);
+        }
+
+
 
         
         [HttpGet("{id}")]
