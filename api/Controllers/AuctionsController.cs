@@ -13,29 +13,67 @@ namespace api.Controllers
     public class AuctionsController : ControllerBase
     {
         private readonly APIContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public AuctionsController(APIContext context, IWebHostEnvironment webHostEnvironment)
         {
         _context = context;
-        _webHostEnvironment = webHostEnvironment;
         }
         
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var auctions =  _context.Auctions.ToList().Select(s => s.ToAuctionsDtoGet());
-            return Ok(auctions);
+            // Retrieve only auctions that are live
+            var auctions = _context.Auctions
+                .Where(auction => auction.IsLive == "yes")
+                .ToList();
+
+            // Check the status of each auction and update if necessary
+            foreach (var auction in auctions)
+            {
+                if (auction.EndTime < DateTime.Now)
+                {
+                    auction.Status = "closed";
+                }
+                else
+                {
+                    auction.Status = "active";
+                }
+            }
+
+            // Save the changes to the database if any auction statuses were updated
+            _context.SaveChanges();
+
+            // Convert the auctions to DTOs for the response
+            var auctionDtos = auctions.Select(s => s.ToAuctionsDtoGet()).ToList();
+
+            return Ok(auctionDtos);
         }
+
+
 
         [Route("my")]
         [HttpPost]
         public IActionResult GetMyAuctions([FromBody] GetMyAuctionsDto request)
         {
-            var auctions =  _context.Auctions.Where(x => x.SellerId == request.Id).ToList().Select(s => s.ToAuctionsDtoGet());
-            return Ok(auctions);
+            var auctions = _context.Auctions.Where(x => x.SellerId == request.Id).ToList();
+            foreach (var auction in auctions)
+            {
+                if (auction.EndTime < DateTime.Now)
+                {
+                    auction.Status = "closed";
+                }
+                else
+                {
+                    auction.Status = "active";
+                }
+            }
+
+            _context.SaveChanges();
+            var auctionDtos = auctions.Select(s => s.ToAuctionsDtoGet()).ToList();
+            return Ok(auctionDtos);
         }
+
         
         [Route("mybids")]
         [HttpPost]
@@ -68,7 +106,7 @@ namespace api.Controllers
             {
                 return NotFound("Auction not found.");
             }
-            auction.Status = request.Status;
+            auction.IsLive = request.IsLive;
             _context.SaveChanges();
             return Ok(auction);
         }
@@ -82,35 +120,79 @@ namespace api.Controllers
             var auction = _context.Auctions.FirstOrDefault(x => x.AuctionId == id);
             if (auction == null)
             {
-                var errorResponse = new {
+                var errorResponse = new
+                {
                     success = false,
                     message = "AuctionNotFound"
                 };
                 return NotFound(errorResponse);
             }
+
             var seller = _context.Users.FirstOrDefault(x => x.UserId == auction.SellerId);
             if (seller == null)
             {
-                var errorResponse = new {
+                var errorResponse = new
+                {
                     success = false,
                     message = "UserNotFound"
                 };
                 return NotFound(errorResponse);
             }
+
             var auctionItems = _context.AuctionItems.Where(x => x.AuctionId == auction.AuctionId).ToList();
             var bids = _context.Bids.Where(x => x.AuctionId == auction.AuctionId).ToList();
+
+            // Determine auction status
+            if (auction.EndTime < DateTime.Now)
+            {
+                auction.Status = "closed";
+                
+                // Get the highest bid if the auction is closed
+                var highestBid = bids.OrderByDescending(b => b.BidAmount).FirstOrDefault();
+                if (highestBid != null)
+                {
+                    auction.WinningBid = highestBid.BidAmount;
+                    auction.WinnerId = highestBid.BidderId;
+
+                    // Fetch winner details
+                    var winner = _context.Users.FirstOrDefault(x => x.UserId == highestBid.BidderId);
+                    var successResponse = new
+                    {
+                        success = true,
+                        message = "ok",
+                        data = new
+                        {
+                            auction = auction,
+                            seller = seller.ToUserDtoGet(),
+                            winner = winner?.ToUserDtoGet() // Return winner details if available
+                        }
+                    };
+
+                    _context.SaveChanges();
+                    return Ok(successResponse);
+                }
+            }
+            else
+            {
+                auction.Status = "active";
+            }
+
             auction.Bids = bids;
             auction.AuctionItems = auctionItems;
-            var successResponse = new {
+            var defaultResponse = new
+            {
                 success = true,
                 message = "ok",
-                data = new {
+                data = new
+                {
                     auction = auction,
                     seller = seller.ToUserDtoGet()
-                },
+                }
             };
-            return Ok(successResponse);
+
+            return Ok(defaultResponse);
         }
+
         
         // Auction Create API
         [Route("create")]
@@ -126,6 +208,7 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
+            
             var auctionModel = new Auction {
                 Title = createAuction.Title,
                 Description = createAuction.Description,
@@ -135,7 +218,8 @@ namespace api.Controllers
                 StartTime = createAuction.StartTime,
                 EndTime = createAuction.EndTime,
                 StartingBid = createAuction.StartingBid,
-                Status = "pending",
+                Status = "",
+                IsLive = "yes",
             };
             
             _context.Auctions.Add(auctionModel);

@@ -16,6 +16,7 @@ public class AuctionDto
     public decimal StartingBid { get; set; }
     // public decimal? WinningBid { get; set; }
     public string? Status { get; set; } = string.Empty;
+    public string? IsLive { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; } = DateTime.Now;
     // public List<AuctionItem> AuctionItems { get; set; } = new List<AuctionItem>();

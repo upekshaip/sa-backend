@@ -33,6 +33,10 @@ public class Auction
 
     [StringLength(100)]
     public string? Status { get; set; } = string.Empty;
+    
+    
+    [StringLength(100)]
+    public string? IsLive { get; set; } = string.Empty;
 
     
     public DateTime CreatedAt { get; private set; } = DateTime.Now;

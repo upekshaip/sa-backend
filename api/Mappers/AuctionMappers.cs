@@ -21,6 +21,7 @@ public static class AuctionMappers
             StartTime = auctionsModel.StartTime,
             EndTime = auctionsModel.EndTime,
             Status = auctionsModel.Status,
+            IsLive = auctionsModel.IsLive,
             CreatedAt = auctionsModel.CreatedAt,
             UpdatedAt = auctionsModel.UpdatedAt
         };
