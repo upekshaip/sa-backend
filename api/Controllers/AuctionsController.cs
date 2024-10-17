@@ -148,14 +148,17 @@ namespace api.Controllers
                 auction.Status = "closed";
                 
                 // Get the highest bid if the auction is closed
-                var highestBid = bids.OrderByDescending(b => b.BidAmount).FirstOrDefault();
+                var highestBid = bids.Where(b => b.Status == "payed").FirstOrDefault();
+                if (highestBid == null) {
+                    highestBid = bids.Where(b=> b.Status == "active").OrderByDescending(b => b.BidAmount).FirstOrDefault();
+                }
                 if (highestBid != null)
                 {
                     auction.WinningBid = highestBid.BidAmount;
                     auction.WinnerId = highestBid.BidderId;
 
                     // Fetch winner details
-                    var winner = _context.Users.FirstOrDefault(x => x.UserId == highestBid.BidderId);
+                    var winner = _context.Users.FirstOrDefault(x => x.UserId == auction.WinnerId);
                     var successResponse = new
                     {
                         success = true,
@@ -164,7 +167,7 @@ namespace api.Controllers
                         {
                             auction = auction,
                             seller = seller.ToUserDtoGet(),
-                            winner = winner?.ToUserDtoGet() // Return winner details if available
+                            winner = winner?.ToUserDtoGet() // Return winner details if available (needs to fix)
                         }
                     };
 

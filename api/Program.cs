@@ -1,3 +1,4 @@
+using api;
 using api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -17,6 +18,8 @@ options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
 ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")
 ));});
 
+
+builder.Services.AddHostedService<BgServices>();
 
 // Configure CORS to allow requests from your frontend (http://localhost:5174)
 builder.Services.AddCors(options =>
