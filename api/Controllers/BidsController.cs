@@ -106,7 +106,7 @@ namespace api.Controllers
                 UserId = bidModel.BidderId,
                 Message = $"You have successfully created a bid for {auction.Title}",
                 Title = "Bid Created",
-                Link = $"/mybids"
+                Link = $"/auction/{auction.AuctionId}"
             });
             _context.Notifications.Add(new Notification {
                 UserId = auction.SellerId,

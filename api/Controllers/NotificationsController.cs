@@ -2,6 +2,7 @@ using api.Data;
 using Microsoft.AspNetCore.Mvc;
 using api.Mappers;
 using api.Dtos.Users;
+using api.Dtos.Notifications;
 
 
 namespace api.Controllers {
@@ -16,7 +17,7 @@ namespace api.Controllers {
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public IActionResult GetByUserId([FromRoute] int id)
         {
             var user = _context.Users.Find(id);
             if (user == null)
@@ -35,6 +36,36 @@ namespace api.Controllers {
             };
             return Ok(successResponse);
         }
+
+
+        [HttpPost]
+        [Route("read")]
+        public IActionResult Read([FromBody] ReadNotifications notificationsDto) 
+        {
+            var notification = _context.Notifications
+                .FirstOrDefault(x => x.Id == notificationsDto.Id && x.UserId == notificationsDto.UserId);
+            
+            if (notification == null)
+            {
+                var errorResponse = new
+                {
+                    success = false,
+                    message = "NotificationNotFound"
+                };
+                return BadRequest(errorResponse);
+            }
+
+            // Change the IsRead property of the notification to true
+            notification.IsRead = true;
+            _context.SaveChanges();
+
+            return Ok(new
+            { 
+                success = true, 
+                message = "ok"
+            });
+        }
+
 
     }
 

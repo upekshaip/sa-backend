@@ -4,7 +4,7 @@ using api.Models;
 namespace api.Dtos.Notifications;
 public class NotificationsDto
 {
-   public int Id { get; set; }
+    public int Id { get; set; }
     public int UserId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Link { get; set; } = string.Empty;
