@@ -101,6 +101,20 @@ namespace api.Controllers
             
             _context.Bids.Add(bidModel);
             _context.SaveChanges();
+            
+            _context.Notifications.Add(new Notification {
+                UserId = bidModel.BidderId,
+                Message = $"You have successfully created a bid for {auction.Title}",
+                Title = "Bid Created",
+                Link = $"/mybids"
+            });
+            _context.Notifications.Add(new Notification {
+                UserId = auction.SellerId,
+                Message = $"You have a new bid for {auction.Title} from {bidder.FirstName} {bidder.LastName}",
+                Title = "New Bid",
+                Link = $"/auction/{auction.AuctionId}"
+            });
+            _context.SaveChanges();
 
             return Ok(new
             { 

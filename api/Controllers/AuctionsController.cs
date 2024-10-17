@@ -224,6 +224,14 @@ namespace api.Controllers
             
             _context.Auctions.Add(auctionModel);
             _context.SaveChanges();
+            
+            _context.Notifications.Add(new Notification {
+                UserId = user.UserId,
+                Message = $"Auction {auctionModel.Title} has been created",
+                Title = "Auction Created",
+                Link = $"/auction/{auctionModel.AuctionId}"
+            });
+            _context.SaveChanges();
 
             return Ok(new
             { 
