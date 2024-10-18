@@ -68,7 +68,7 @@ namespace api.Controllers
                 };
                 return BadRequest(errorResponse);
             }
-            if (PaymentDto.Type != "StartingBid")
+            if (PaymentDto.Type != "StartingBid" && PaymentDto.Type != "AuctionPurchase")
             {
                 var errorResponse = new {
                     success = false,
@@ -89,6 +89,7 @@ namespace api.Controllers
             _context.Payments.Add(payment);
 
 
+            StripeConfiguration.ApiKey = "sk_test_51QBE7uDOXxHdMorR4utkjoNQ9Lem2QepUwCy3tyr7lIeZbhJSkYP9y7i5pXcPkrpN3ovO01zjWaZAKULMD8cMymc00iHkBI4fX";
             // StartingBids only
             if (PaymentDto.Type == "StartingBid") {
 
@@ -104,7 +105,7 @@ namespace api.Controllers
                     AuctionId = PaymentDto.AuctionId,
                     BidderId = PaymentDto.UserId,
                     Status = "active",
-                    BidAmount = PaymentDto.Amount,
+                    BidAmount = auction.StartingBid + 10,
                     BidderName = user.FirstName + " " + user.LastName
                 };
                 _context.Bids.Add(bidModel);
@@ -124,30 +125,49 @@ namespace api.Controllers
                 });
                 
                 _context.SaveChanges();
+            }
+            if (PaymentDto.Type == "AuctionPurchase") {
+                var ThatBid = _context.Bids.Where(x => x.BidderId == PaymentDto.UserId && x.AuctionId == PaymentDto.AuctionId && x.Status == "active").OrderByDescending(x => x.BidAmount).ToList().FirstOrDefault();
+                if (ThatBid == null)
+                {
+                    var errorResponse = new {
+                        success = false,
+                        message = "NoActiveBid"
+                    };
+                    return BadRequest(errorResponse);
+                }
+                ThatBid.Status = "payed";
+                
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = PaymentDto.UserId,
+                    Title = "Payment successful - You bought the item",
+                    Message = "Your payment was successful. You have bought the item.",
+                    Link = "/auction/" + PaymentDto.AuctionId,
+                });
 
-                StripeConfiguration.ApiKey = "sk_test_51QBE7uDOXxHdMorR4utkjoNQ9Lem2QepUwCy3tyr7lIeZbhJSkYP9y7i5pXcPkrpN3ovO01zjWaZAKULMD8cMymc00iHkBI4fX";
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = auction.SellerId,
+                    Title = "Your item sold",
+                    Message = "Your item was bought by " + user.FirstName + " " + user.LastName,
+                    Link = "/auction/" + PaymentDto.AuctionId,
+                });
 
-                var options = new PaymentIntentCreateOptions
+                _context.SaveChanges();
+            }
+
+            var options = new PaymentIntentCreateOptions
                 {
                     Amount = (int)(PaymentDto.Amount * 100), // Amount in cents ($50.00)
                     Currency = "usd",
                     PaymentMethodTypes = new List<string> { "card" },
                 };
 
-                var service = new PaymentIntentService();
-                PaymentIntent intent = await service.CreateAsync(options);
+            var service = new PaymentIntentService();
+            PaymentIntent intent = await service.CreateAsync(options);
 
-                return Ok(new { clientSecret = intent.ClientSecret });
-            }
-
-            var successResponse = new {
-                success = true,
-                message = "ok",
-                data = payment
-            };
-            
-            return Ok(successResponse);
-
+            return Ok(new { clientSecret = intent.ClientSecret });
         } 
 
 
@@ -176,13 +196,23 @@ namespace api.Controllers
                 };
                 return BadRequest(errorResponse);
             }
-            if (GetInfo.Type != "StartingBid") {
+            if (GetInfo.Type == "AuctionPurchase") {
                 var errorResponse = new
                 {
-                    success = false,
-                    message = "InvalidType"
+                    success = true,
+                    message = "ok",
+                    data = new
+                    {
+                        auction = auction,
+                        amount = auction.WinningBid - (auction.StartingBid * 0.1m),
+                        calc = new {
+                            previousPayment = _context.Payments.FirstOrDefault(x => x.UserId == GetInfo.UserId && x.AuctionId == GetInfo.AuctionId && x.Type == "StartingBid")?.Amount ?? 0,
+                            total = auction.WinningBid,
+                            amount = auction.WinningBid - (auction.StartingBid * 0.1m),
+                        }
+                    }
                 };
-                return BadRequest(errorResponse);
+                return Ok(errorResponse);
             }
             
             if (GetInfo.Type == "StartingBid") {
@@ -192,7 +222,7 @@ namespace api.Controllers
                     message = "ok",
                     data = new
                     {
-                        auction = auction.ToAuctionsDtoGet(),
+                        auction = auction,
                         amount = auction.StartingBid * 0.1m
                     }
                 };

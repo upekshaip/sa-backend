@@ -103,7 +103,7 @@ namespace api
                                 UserId = bid.BidderId,
                                 Title = "Auction Disqualification",
                                 Link = "/auction/" + auction.AuctionId,
-                                Message = "You have been disqualified from the auction for failing to pay within the required time window (24 hrs after the previous member has discolified / 24 hours after the auction end time)."
+                                Message = "You have been disqualified from the auction for failing to pay within the required time window (24 hrs after the previous member has discolified / 24 hours after the auction end time). Now you cannot refund the amount you paid."
                             };
                             _context.Notifications.Add(notification);
                             _context.SaveChanges(); // Save the status update immediately
@@ -116,14 +116,17 @@ namespace api
                             auction.WinnerId = bid.BidderId;
                             auction.WinningBid = bid.BidAmount;
                             winnerFound = true;
-                            Notification notification = new Notification
-                            {
-                                UserId = bid.BidderId,
-                                Title = "Auction Win",
-                                Link = "/auction/" + auction.AuctionId,
-                                Message = "Congratulations! You have won the auction. Please pay within 24 hours to claim your prize."
-                            };
-                            _context.Notifications.Add(notification);
+                            var is_notified = _context.Notifications.Where(x => x.UserId == bid.BidderId && x.Title == "Auction Win" && x.Link == "/auction/" + auction.AuctionId);
+                            if (is_notified == null) {
+                                Notification notification = new Notification
+                                {
+                                    UserId = bid.BidderId,
+                                    Title = "Auction Win",
+                                    Link = "/auction/" + auction.AuctionId,
+                                    Message = "Congratulations! You have won the auction. Please pay within 24 hours to claim your prize. If you fail to pay within the required time window, you will be disqualified and the next highest bidder will be selected as the winner. Thank you for participating in the auction."
+                                };
+                                _context.Notifications.Add(notification);                                                       
+                            }
                             break; // Stop checking as we found a winner
                         }
                     }
