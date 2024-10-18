@@ -63,6 +63,11 @@ namespace api
                         // Skip bidders who are already disqualified
                         if (bid.Status == "Not qualified")
                         {
+                            if (auction.WinnerId == bid.BidderId)
+                            {
+                                auction.WinnerId = null;
+                                auction.WinningBid = null;
+                            }
                             continue; // Skip to the next bid
                         }
 
