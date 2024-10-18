@@ -248,5 +248,43 @@ namespace api.Controllers
 
             return Ok(new { clientSecret = intent.ClientSecret });
         }
+        
+        
+        [HttpPost]
+        [Route("my")]
+        public IActionResult GetMyPayments([FromBody] GetMyPaymentsDto paymentsDto)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.UserId == paymentsDto.UserId);
+            if (user == null)
+            {
+                var errorResponse = new
+                {
+                    success = false,
+                    message = "UserNotFound"
+                };
+                return NotFound(errorResponse);
+            }
+
+            // Retrieve payments for the user
+            var payments = _context.Payments
+                .Where(x => x.UserId == paymentsDto.UserId)
+                .Select(payment => new
+                {
+                    payment, // Include payment details
+                    auction = _context.Auctions.FirstOrDefault(a => a.AuctionId == payment.AuctionId)!.ToAuctionsDtoGet() // Include auction details
+                })
+                .ToList();
+
+            var successResponse = new
+            {
+                success = true,
+                message = "ok",
+                data = payments
+            };
+
+            return Ok(successResponse);
+        }
+
+
     }
 }
