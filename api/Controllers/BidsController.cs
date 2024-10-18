@@ -89,7 +89,22 @@ namespace api.Controllers
                 };
                 return NotFound(errorResponse);
             }
-            
+
+            var payment = _context.Payments.FirstOrDefault(x => x.UserId == createBid.BidderId && x.AuctionId == createBid.AuctionId && x.Type == "StartingBid");        
+            if (payment == null) {
+                var makePaymentResponse = new {
+                    success = false,
+                    data = new {
+                        amount = auction.StartingBid * (decimal)0.1,
+                        type = "StartingBid",
+                        auctionId = auction.AuctionId,
+                        userId = bidder.UserId,
+                    },
+                    message = "Need to make a payment to start bidding"
+                };
+                return Ok(makePaymentResponse);
+            }
+
             
             var bidModel = new Bid {
                 AuctionId = createBid.AuctionId,
