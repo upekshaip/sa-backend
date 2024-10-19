@@ -37,6 +37,30 @@ namespace api.Controllers {
             return Ok(successResponse);
         }
 
+        [HttpPost]
+        [Route("check")]
+        public IActionResult Check([FromBody] CheckNotificationsDto notificationsDto) {
+
+            var user = _context.Users.FirstOrDefault(x => x.UserId == notificationsDto.UserId);
+            if (user == null)
+            {
+                var errorResponse = new {
+                    success = false,
+                    message = "UserNotFound"
+                };
+                return NotFound(errorResponse);
+            }
+            var notification = _context.Notifications
+                .Where(x => x.UserId == notificationsDto.UserId && x.IsRead == false)
+                .Count();
+
+            return Ok(new {
+                success = true,
+                message = "ok",
+                data = notification
+            });
+        }
+
 
         [HttpPost]
         [Route("read")]

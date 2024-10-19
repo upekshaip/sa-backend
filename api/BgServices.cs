@@ -44,7 +44,7 @@ namespace api
                 foreach (var auction in closedAuctions)
                 {
                     var bids = _context.Bids
-                        .Where(x => x.AuctionId == auction.AuctionId && (x.Status == "active" || x.Status == "payed"))
+                        .Where(x => x.AuctionId == auction.AuctionId && (x.Status == "active" || x.Status == "paid"))
                         .OrderByDescending(x => x.BidAmount) // Sort bids from highest to lowest
                         .ToList();
                     Console.WriteLine("Bids count: " + bids.Count);
@@ -72,7 +72,7 @@ namespace api
                         }
 
                         // If this bid has already been marked as paid, they are the winner
-                        if (bid.Status == "payed")
+                        if (bid.Status == "paid")
                         {
                             auction.WinnerId = bid.BidderId;
                             auction.WinningBid = bid.BidAmount;
@@ -116,8 +116,8 @@ namespace api
                             auction.WinnerId = bid.BidderId;
                             auction.WinningBid = bid.BidAmount;
                             winnerFound = true;
-                            var is_notified = _context.Notifications.Where(x => x.UserId == bid.BidderId && x.Title == "Auction Win" && x.Link == "/auction/" + auction.AuctionId);
-                            if (is_notified == null) {
+                            var is_notified = _context.Notifications.Where(x => x.UserId == bid.BidderId && x.Title == "Auction Win" && x.Link == ("/auction/" + auction.AuctionId));
+                            if (is_notified.Count() == 0){
                                 Notification notification = new Notification
                                 {
                                     UserId = bid.BidderId,

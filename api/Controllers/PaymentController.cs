@@ -84,7 +84,7 @@ namespace api.Controllers
                 PaymentMethod = "card",
                 Type = PaymentDto.Type,
                 IsOK = true,
-                PaymentStatus = "payed"
+                PaymentStatus = "paid"
             };
             _context.Payments.Add(payment);
 
@@ -136,7 +136,7 @@ namespace api.Controllers
                     };
                     return BadRequest(errorResponse);
                 }
-                ThatBid.Status = "payed";
+                ThatBid.Status = "paid";
                 
                 _context.Notifications.Add(new Notification
                 {
@@ -153,6 +153,24 @@ namespace api.Controllers
                     Message = "Your item was bought by " + user.FirstName + " " + user.LastName,
                     Link = "/auction/" + PaymentDto.AuctionId,
                 });
+
+                _context.SaveChanges();
+
+                var other_bidders = _context.Bids.Where(x => x.AuctionId == PaymentDto.AuctionId && x.Status == "active").ToList();
+                foreach (var bidder in other_bidders)
+                {
+                    bidder.Status = "exited";
+                    if (bidder.BidderId != PaymentDto.UserId) {
+
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = bidder.BidderId,
+                        Title = "Auction is bought by someone else",
+                        Message = "The auction is bought by someone else. You can no longer bid on this auction. Your starting bid money will be refunded.",
+                        Link = "/auction/" + PaymentDto.AuctionId,
+                    });
+                    }
+                }
 
                 _context.SaveChanges();
             }

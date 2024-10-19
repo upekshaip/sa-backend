@@ -148,7 +148,7 @@ namespace api.Controllers
                 auction.Status = "closed";
                 
                 // Get the highest bid if the auction is closed
-                var highestBid = bids.Where(b => b.Status == "payed").FirstOrDefault();
+                var highestBid = bids.Where(b => b.Status == "paid").FirstOrDefault();
                 if (highestBid == null) {
                     highestBid = bids.Where(b=> b.Status == "active").OrderByDescending(b => b.BidAmount).FirstOrDefault();
                 }
