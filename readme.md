@@ -4,6 +4,12 @@
 
 This API provides endpoints for managing auctions, bids, payments, users, notifications, and dashboard data. The API follows the OpenAPI 3.0.1 specification.
 
+### ER Diagram
+
+![ER Diagram](/imgs/ERD.png)
+
+This diagram provides a visual representation of the database structure, showing the relationships between different entities within the system.
+
 ### Menu
 
 - [Overview](#overview)
