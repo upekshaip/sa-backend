@@ -101,7 +101,7 @@ Example configuration:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Port=8111;Database=auction_system;User=root;Password=;"
+    "DefaultConnection": "Server=localhost;Port=3306;Database=auction_system;User=root;Password=;"
   },
   "Logging": {
     "LogLevel": {
