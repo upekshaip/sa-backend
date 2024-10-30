@@ -1,4 +1,6 @@
 api/obj
 api/bin
 .fake
-api/uploads
+api/uploads/*.jpg
+api/uploads/*.jpeg
+api/uploads/*.png

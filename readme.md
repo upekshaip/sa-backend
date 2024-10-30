@@ -13,6 +13,7 @@ This diagram provides a visual representation of the database structure, showing
 ### Menu
 
 - [Overview](#overview)
+- [Setup](#setup)
 - [Endpoints](#endpoints)
   - [Auctions](#auctions)
     - [GET /api/auctions](#get-api-auctions)
@@ -62,6 +63,84 @@ This diagram provides a visual representation of the database structure, showing
   - [StatusUpdateDto](#statusupdatedto)
   - [UpdateUserDto](#updateuserdto)
   - [UserLoginDto](#userlogindto)
+
+## Setup
+
+Follow these steps to set up and run the project.
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/upekshaip/sa-backend.git
+```
+
+#### 2. Navigate to the project directory
+
+```bash
+cd sa-backend
+```
+
+#### 3. Restore the dependencies
+
+```bash
+dotnet restore
+```
+
+#### 4. Install Entity Framework Core tools (if not already installed)
+
+```bash
+dotnet tool install --global dotnet-ef --version 8.*
+```
+
+#### 5. Configure the connection string
+
+Open the `appsettings.json` file and update the `DefaultConnection` string according to your MySQL server port and credentials.
+
+Example configuration:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Port=8111;Database=auction_system;User=root;Password=;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+```
+
+#### 6. Navigate to the API directory
+
+```bash
+cd api
+```
+
+#### 7. Add the initial migration
+
+```bash
+dotnet ef migrations add InitialDB
+```
+
+#### 8. Update the database
+
+```bash
+dotnet ef database update
+```
+
+#### 9. Run the project
+
+```bash
+dotnet watch run
+```
+
+#### Additional Notes
+
+- Ensure MySQL is running on the specified port in the connection string.
+- You can modify the database connection details in `appsettings.json` as needed.
 
 ### Endpoints
 
